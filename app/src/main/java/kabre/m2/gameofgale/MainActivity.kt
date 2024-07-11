@@ -1,5 +1,6 @@
 package kabre.m2.gameofgale
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -35,7 +36,8 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.adapter = adapter
 
         binding.resetBt.setOnClickListener {
-            resetBoard()
+            val intent=Intent(this@MainActivity,MainActivity::class.java)
+            startActivity(intent)
         }
 
         binding.rejouerBt.setOnClickListener {
@@ -99,6 +101,7 @@ class MainActivity : AppCompatActivity() {
                 board[i][j] = ""
             }
         }
+        fillDefaultValues()
         winningPath.clear()  // Vider la liste des chemins de victoire
         currentPlayer = "X"
         adapter.updateBoard(winningPath)
@@ -106,6 +109,39 @@ class MainActivity : AppCompatActivity() {
         val bg = adapter.getBackgroundResource(currentPlayer)
         binding.statusTextView.setBackgroundResource(bg)
     }
+
+    private fun fillDefaultValues() {
+        // Crée des listes vides pour les colonnes et lignes à remplir
+        val columnsToFill = mutableListOf<Int>()
+        val rowsToFill = mutableListOf<Int>()
+
+        // Remplit les colonnes et lignes avec des indices pairs
+        for (i in 0 until boardSize) {
+            if (i % 2 == 0) {
+                columnsToFill.add(i)
+                rowsToFill.add(i)
+            }
+        }
+
+        // Remplir les colonnes avec "O" en alternance
+        for (col in columnsToFill) {
+            for (row in 1 until boardSize) {
+                if (row % 2 != 0) {
+                    board[row][col] = "O"
+                }
+            }
+        }
+
+        // Remplir les lignes avec "X" en alternance
+        for (row in rowsToFill) {
+            for (col in 1 until boardSize) {
+                if (col % 2 != 0) {
+                    board[row][col] = "X"
+                }
+            }
+        }
+    }
+
 
     private fun checkWinner(row: Int, col: Int): Boolean {
         return if (currentPlayer == "X") {
